@@ -160,9 +160,9 @@ void drawPoint(){
   float y = (float)positionY / 65535.0f * 2;
   float z = (float)positionZ / 65535.0f * 2;
 
-  glPointSize(5.0f);
+  glPointSize(10.0f);
   glBegin(GL_POINTS);
-  glColor3f(0.5,0.5,0.5);
+  glColor3f(0.8,0.2,0.2);
   glVertex3d(x, y, z);
   glEnd();
 }
