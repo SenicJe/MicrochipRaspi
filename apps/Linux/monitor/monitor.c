@@ -1,4 +1,5 @@
 #include "monitor.h"
+#include "device.h"
 
 /*  Poor man's approximation of PI */
 #define PI 3.1415926535898
@@ -8,13 +9,13 @@
 
 /*  Globals */
 double dim=3.0; /* dimension of orthogonal box */
-char *windowName = "OpenGL screenscasts 7: Drawing in 3d part 2: Cubes, Perspective and Orthogonal Projections";
-int windowWidth=500;
-int windowHeight=450;
+char *windowName = "Gesture Monitor";
+int windowWidth=800;
+int windowHeight=800;
 
 /*  Various global state */
 int toggleAxes = 1;   /* toggle axes on and off */
-int toggleValues = 0; /* toggle values on and off */
+int toggleValues = 1; /* toggle values on and off */
 int toggleMode = 0; /* projection mode */
 int th = -45;   /* azimuth of view angle */
 int ph = 30;   /* elevation of view angle */
@@ -30,6 +31,13 @@ GLfloat vertE[3] = { 0.5, 0.5,-0.5};
 GLfloat vertF[3] = {-0.5, 0.5,-0.5};
 GLfloat vertG[3] = {-0.5,-0.5,-0.5};
 GLfloat vertH[3] = { 0.5,-0.5,-0.5};
+
+int frameCount = 0;
+int positionX = 0;
+int positionY = 0;
+int positionZ = 0;
+
+void update();
 
 /*
  * project()
@@ -94,24 +102,8 @@ void drawValues()
 {
   if (toggleValues) {
     glColor3f(0.8,0.8,0.8);
-    printAt(5,5,"View Angle (th, ph) =(%d, %d)", th,ph);
-    printAt(5,25,"Projection mode =(%s)", toggleMode?"Perspective":"Orthogonal");
-    glRasterPos3fv(vertA);
-    print("A");
-    glRasterPos3fv(vertB);
-    print("B");
-    glRasterPos3fv(vertC);
-    print("C");
-    glRasterPos3fv(vertD);
-    print("D");
-    glRasterPos3fv(vertE);
-    print("E");
-    glRasterPos3fv(vertF);
-    print("F");
-    glRasterPos3fv(vertG);
-    print("G");
-    glRasterPos3fv(vertH);
-    print("H");
+    printAt(5,5,"Position %d %d %d", positionX, positionY, positionZ);
+//    printAt(5,25,"Frame Count =(%d)", frameCount);
   }
 }
 
@@ -163,6 +155,18 @@ void drawShape()
   glEnd();
 }
 
+void drawPoint(){
+  float x = (float)positionX / 65535.0f * 2;
+  float y = (float)positionY / 65535.0f * 2;
+  float z = (float)positionZ / 65535.0f * 2;
+
+  glPointSize(5.0f);
+  glBegin(GL_POINTS);
+  glColor3f(0.5,0.5,0.5);
+  glVertex3d(x, y, z);
+  glEnd();
+}
+
 /*
  *  display()
  *  ------
@@ -197,11 +201,14 @@ void display()
   /*  Draw  */
   drawAxes();
   drawValues();
+  drawPoint();
 //  drawShape();
 
   /*  Flush and swap */
   glFlush();
   glutSwapBuffers();
+
+  update();
 }
 
 /*
@@ -224,7 +231,11 @@ void reshape(int width,int height)
 void windowKey(unsigned char key,int x,int y)
 {
   /*  Exit on ESC */
-  if (key == 27) exit(0);
+  if (key == 27) {
+    cleanup();
+    print("Bye");
+    exit(0);
+  }
   else if (key == 'a' || key == 'A') toggleAxes = 1-toggleAxes;
   else if (key == 'v' || key == 'V') toggleValues = 1-toggleValues;
   else if (key == 'm' || key == 'M') toggleMode = 1-toggleMode;
@@ -273,6 +284,15 @@ void windowMenu(int value)
   windowKey((unsigned char)value, 0, 0);
 }
 
+void update(){
+  frameCount++;
+  glutPostRedisplay();
+  hmi3d_position_t* pos = getPosition();
+  positionX = pos->x;
+  positionY = pos->y;
+  positionZ = pos->z;
+}
+
 /*
  *  main()
  *  ----
@@ -280,6 +300,11 @@ void windowMenu(int value)
  */
 int main(int argc,char* argv[])
 {
+  if(setupDevice() != 1) {
+    printf("Setup Device fail");
+    return;
+  }
+
   glutInit(&argc,argv);
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
   glutInitWindowSize(windowWidth,windowHeight);
@@ -289,6 +314,7 @@ int main(int argc,char* argv[])
   glutReshapeFunc(reshape);
   glutKeyboardFunc(windowKey);
   glutSpecialFunc(windowSpecial);
+//  glutTimerFunc(20, glutTimer, 1);
 
   glutCreateMenu(windowMenu);
   glutAddMenuEntry("Toggle Axes [a]",'a');
@@ -297,5 +323,6 @@ int main(int argc,char* argv[])
   glutAttachMenu(GLUT_RIGHT_BUTTON);
 
   glutMainLoop();
+
   return 0;
 }

@@ -27,7 +27,7 @@ framework_dyn_FILENAME  := libmchp_hmi.so
 framework_dyn_CFLAGS    := -fpic -DHMI_API_EXPORT -DHMI_API_DYNAMIC -I../../api/src/io/hidapi
 framework_dyn_LDFLAGS   := -shared -ludev
 
-monitor_SRC_FILES := monitor.c print.c
+monitor_SRC_FILES := monitor.c print.c device.c
 monitor_SRC_PATH  := monitor
 monitor_BUILDDIR  := $(BUILDDIR)/monitor
 monitor_FILENAME  := monitor
