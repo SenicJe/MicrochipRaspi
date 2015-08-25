@@ -5,7 +5,7 @@ CC := gcc
 CFLAGS := -g -O2 -I../../api/include
 MKDIR := mkdir -p
 
-APPS := console
+APPS := monitor
 FRAMEWORKS := framework_dyn
 
 BUILDDIR := build
@@ -27,12 +27,12 @@ framework_dyn_FILENAME  := libmchp_hmi.so
 framework_dyn_CFLAGS    := -fpic -DHMI_API_EXPORT -DHMI_API_DYNAMIC -I../../api/src/io/hidapi
 framework_dyn_LDFLAGS   := -shared -ludev
 
-console_SRC_FILES := hmi.c main.c menu.c ui.c
-console_SRC_PATH  := console
-console_BUILDDIR  := $(BUILDDIR)/console
-console_FILENAME  := console
-console_CFLAGS    := -DHMI_API_DYNAMIC
-console_LDFLAGS   := -L$(BUILDDIR)/bin -lmchp_hmi -Wl,-rpath,\$$ORIGIN -lcurses -lglut -lGL -lGLEW -lGLU -lm
+monitor_SRC_FILES := monitor.c print.c
+monitor_SRC_PATH  := monitor
+monitor_BUILDDIR  := $(BUILDDIR)/monitor
+monitor_FILENAME  := monitor
+monitor_CFLAGS    := -DHMI_API_DYNAMIC
+monitor_LDFLAGS   := -L$(BUILDDIR)/bin -lmchp_hmi -Wl,-rpath,\$$ORIGIN -lcurses -lglut -lGL -lGLEW -lGLU -lm
 
 .PHONY: all framework apps clean
 .SUFFIXES:

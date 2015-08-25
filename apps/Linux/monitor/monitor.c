@@ -1,4 +1,4 @@
-#include "ui.h"
+#include "monitor.h"
 
 /*  Poor man's approximation of PI */
 #define PI 3.1415926535898
@@ -8,29 +8,28 @@
 
 /*  Globals */
 double dim=3.0; /* dimension of orthogonal box */
-char *windowName = "Gesture Monitor";
-int windowWidth=640;
-int windowHeight=640;
+char *windowName = "OpenGL screenscasts 7: Drawing in 3d part 2: Cubes, Perspective and Orthogonal Projections";
+int windowWidth=500;
+int windowHeight=450;
 
 /*  Various global state */
-int toggleAxes = 1;   /* toggle axes on and off */
-int toggleValues = 0; /* toggle values on and off */
+int toggleAxes = 0;   /* toggle axes on and off */
+int toggleValues = 1; /* toggle values on and off */
 int toggleMode = 0; /* projection mode */
-int th = -45;   /* azimuth of view angle */
-int ph = 30;   /* elevation of view angle */
+int th = 0;   /* azimuth of view angle */
+int ph = 0;   /* elevation of view angle */
 int fov = 55; /* field of view for perspective */
 int asp = 1;  /* aspect ratio */
 
-float pointX = 0.1;
-float pointY = 0.1;
-float pointZ = 0.1;
-
-void setPoint(float x, float y, float z) {
-  pointX = x;
-  pointY = y;
-  pointZ = z;
-}
-
+/*  Cube vertices */
+GLfloat vertA[3] = { 0.5, 0.5, 0.5};
+GLfloat vertB[3] = {-0.5, 0.5, 0.5};
+GLfloat vertC[3] = {-0.5,-0.5, 0.5};
+GLfloat vertD[3] = { 0.5,-0.5, 0.5};
+GLfloat vertE[3] = { 0.5, 0.5,-0.5};
+GLfloat vertF[3] = {-0.5, 0.5,-0.5};
+GLfloat vertG[3] = {-0.5,-0.5,-0.5};
+GLfloat vertH[3] = { 0.5,-0.5,-0.5};
 
 /*
  * project()
@@ -65,14 +64,12 @@ void drawAxes()
   if (toggleAxes) {
     /*  Length of axes */
     double len = 2.0;
+    glColor3f(1.0,1.0,1.0);
     glBegin(GL_LINES);
-    glColor3f(1.0,0,0);
     glVertex3d(0,0,0);
     glVertex3d(len,0,0);
-    glColor3f(0,1.0,0);
     glVertex3d(0,0,0);
     glVertex3d(0,len,0);
-    glColor3f(0,0,1.0);
     glVertex3d(0,0,0);
     glVertex3d(0,0,len);
     glEnd();
@@ -86,11 +83,81 @@ void drawAxes()
   }
 }
 
-void drawPoint() {
-  glBegin(GL_POINTS);
-  glColor3f(0.5,0.5,0.5);
-  glPointSize(1.0);
-  glVertex3d(pointX, pointY, pointZ);
+/*
+ *  drawValues()
+ *  ------
+ *  Draw the values in the lower left corner
+ */
+void drawValues()
+{
+  if (toggleValues) {
+    glColor3f(0.8,0.8,0.8);
+    //printAt(5,5,"View Angle (th, ph) =(%d, %d)", th,ph);
+    //printAt(5,25,"Projection mode =(%s)", toggleMode?"Perspective":"Orthogonal");
+    glRasterPos3fv(vertA);
+    //print("A");
+    glRasterPos3fv(vertB);
+    //print("B");
+    glRasterPos3fv(vertC);
+    //print("C");
+    glRasterPos3fv(vertD);
+    //print("D");
+    glRasterPos3fv(vertE);
+    //print("E");
+    glRasterPos3fv(vertF);
+    //print("F");
+    glRasterPos3fv(vertG);
+    //print("G");
+    glRasterPos3fv(vertH);
+    //print("H");
+  }
+}
+
+/*
+ *  drawShape()
+ *  ------
+ *  Draw the GLUT shape
+ */
+void drawShape()
+{
+  /* Cube */
+  glBegin(GL_QUADS);
+  /* front => ABCD yellow */
+  glColor3f(1.0,1.0,0.0);
+  glVertex3fv(vertA);
+  glVertex3fv(vertB);
+  glVertex3fv(vertC);
+  glVertex3fv(vertD);
+  /* back => FEHG red */
+  glColor3f(1.0,0.0,0.0);
+  glVertex3fv(vertF);
+  glVertex3fv(vertE);
+  glVertex3fv(vertH);
+  glVertex3fv(vertG);
+  /* right => EADH green */
+  glColor3f(0.0,1.0,0.0);
+  glVertex3fv(vertE);
+  glVertex3fv(vertA);
+  glVertex3fv(vertD);
+  glVertex3fv(vertH);
+  /* left => BFGC blue */
+  glColor3f(0.0,0.0,1.0);
+  glVertex3fv(vertB);
+  glVertex3fv(vertF);
+  glVertex3fv(vertG);
+  glVertex3fv(vertC);
+  /* top => EFBA turquoise */
+  glColor3f(0.0,1.0,1.0);
+  glVertex3fv(vertE);
+  glVertex3fv(vertF);
+  glVertex3fv(vertB);
+  glVertex3fv(vertA);
+  /* bottom => DCGH pink */
+  glColor3f(1.0,0.0,1.0);
+  glVertex3fv(vertD);
+  glVertex3fv(vertC);
+  glVertex3fv(vertG);
+  glVertex3fv(vertH);
   glEnd();
 }
 
@@ -121,15 +188,12 @@ void display()
   else {
     glRotatef(ph,1,0,0);
     glRotatef(th,0,1,0);
-    glRotatef(90,1,0,0);
-    glRotatef(-180,1,1,0);
   }
 
   /*  Draw  */
   drawAxes();
- // drawValues();
- // drawShape();
-  //drawPoint();
+  drawValues();
+  drawShape();
 
   /*  Flush and swap */
   glFlush();
@@ -210,16 +274,11 @@ void windowMenu(int value)
  *  ----
  *  Start up GLUT and tell it what to do
  */
-void run() 
+int main(int argc,char* argv[])
 {
-  char *argv [1];
-  int argc = 1;
-  argv[0] = strdup("GestureMonitor");
-
   glutInit(&argc,argv);
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
   glutInitWindowSize(windowWidth,windowHeight);
-  glutInitWindowPosition(0,0);
   glutCreateWindow(windowName);
 
   glutDisplayFunc(display);
@@ -234,6 +293,5 @@ void run()
   glutAttachMenu(GLUT_RIGHT_BUTTON);
 
   glutMainLoop();
+  return 0;
 }
-
-

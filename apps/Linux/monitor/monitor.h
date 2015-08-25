@@ -1,5 +1,5 @@
-#ifndef __SENIC_UI__
-#define __SENIC_UI__
+#ifndef __GESTURE_MONITOR__
+#define __GESTURE_MONITOR__
 
 /* standard headers */
 #include <stdio.h>
@@ -19,8 +19,5 @@
 #else
 #include <GL/glut.h>
 #endif
-
-/* Gesture Device*/
-#include <hmi_api.h>
 
 #endif
