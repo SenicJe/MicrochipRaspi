@@ -13,11 +13,11 @@ int windowWidth=500;
 int windowHeight=450;
 
 /*  Various global state */
-int toggleAxes = 0;   /* toggle axes on and off */
-int toggleValues = 1; /* toggle values on and off */
+int toggleAxes = 1;   /* toggle axes on and off */
+int toggleValues = 0; /* toggle values on and off */
 int toggleMode = 0; /* projection mode */
-int th = 0;   /* azimuth of view angle */
-int ph = 0;   /* elevation of view angle */
+int th = -45;   /* azimuth of view angle */
+int ph = 30;   /* elevation of view angle */
 int fov = 55; /* field of view for perspective */
 int asp = 1;  /* aspect ratio */
 
@@ -64,22 +64,24 @@ void drawAxes()
   if (toggleAxes) {
     /*  Length of axes */
     double len = 2.0;
-    glColor3f(1.0,1.0,1.0);
     glBegin(GL_LINES);
+    glColor3f(1.0,0,0);
     glVertex3d(0,0,0);
     glVertex3d(len,0,0);
+    glColor3f(0,1.0,0);
     glVertex3d(0,0,0);
     glVertex3d(0,len,0);
+    glColor3f(0,0,1.0);
     glVertex3d(0,0,0);
     glVertex3d(0,0,len);
     glEnd();
     /*  Label axes */
     glRasterPos3d(len,0,0);
-    //print("X");
+    print("X");
     glRasterPos3d(0,len,0);
-    //print("Y");
+    print("Y");
     glRasterPos3d(0,0,len);
-    //print("Z");
+    print("Z");
   }
 }
 
@@ -92,24 +94,24 @@ void drawValues()
 {
   if (toggleValues) {
     glColor3f(0.8,0.8,0.8);
-    //printAt(5,5,"View Angle (th, ph) =(%d, %d)", th,ph);
-    //printAt(5,25,"Projection mode =(%s)", toggleMode?"Perspective":"Orthogonal");
+    printAt(5,5,"View Angle (th, ph) =(%d, %d)", th,ph);
+    printAt(5,25,"Projection mode =(%s)", toggleMode?"Perspective":"Orthogonal");
     glRasterPos3fv(vertA);
-    //print("A");
+    print("A");
     glRasterPos3fv(vertB);
-    //print("B");
+    print("B");
     glRasterPos3fv(vertC);
-    //print("C");
+    print("C");
     glRasterPos3fv(vertD);
-    //print("D");
+    print("D");
     glRasterPos3fv(vertE);
-    //print("E");
+    print("E");
     glRasterPos3fv(vertF);
-    //print("F");
+    print("F");
     glRasterPos3fv(vertG);
-    //print("G");
+    print("G");
     glRasterPos3fv(vertH);
-    //print("H");
+    print("H");
   }
 }
 
@@ -188,12 +190,14 @@ void display()
   else {
     glRotatef(ph,1,0,0);
     glRotatef(th,0,1,0);
+    glRotatef(90,1,0,0);
+    glRotatef(180,1,1,0);
   }
 
   /*  Draw  */
   drawAxes();
   drawValues();
-  drawShape();
+//  drawShape();
 
   /*  Flush and swap */
   glFlush();
