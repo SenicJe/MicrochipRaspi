@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="io\cdcserial_win.c">
+      <Filter>io</Filter>
+    </ClCompile>
+    <ClCompile Include="io\serial.c">
+      <Filter>io</Filter>
+    </ClCompile>
+    <ClCompile Include="io\hidapi\windows\hid.c">
+      <Filter>io\hidapi</Filter>
+    </ClCompile>
+    <ClCompile Include="io\hid_3dtouchpad.c">
+      <Filter>io</Filter>
+    </ClCompile>
+    <ClCompile Include="core.c" />
+    <ClCompile Include="dynamic\dynamic.c">
+      <Filter>dynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="2d\2d.c">
+      <Filter>2d</Filter>
+    </ClCompile>
+    <ClCompile Include="2d\2d_data.c">
+      <Filter>2d</Filter>
+    </ClCompile>
+    <ClCompile Include="2d\2d_fw_version.c">
+      <Filter>2d</Filter>
+    </ClCompile>
+    <ClCompile Include="2d\2d_rtc.c">
+      <Filter>2d</Filter>
+    </ClCompile>
+    <ClCompile Include="2d\2d_update.c">
+      <Filter>2d</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\3d.c">
+      <Filter>3d</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\3d_update.c">
+      <Filter>3d</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\3d_fw_version.c">
+      <Filter>3d</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\3d_rtc.c">
+      <Filter>3d</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\3d_data.c">
+      <Filter>3d</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\hmi_api.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\hmi_dynamic.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\hmi_static.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="impl.h" />
+    <ClInclude Include="io\io.h">
+      <Filter>io</Filter>
+    </ClInclude>
+    <ClInclude Include="io\hidapi\hidapi.h">
+      <Filter>io\hidapi</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\arch.h">
+      <Filter>architecture</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\x86_win.h">
+      <Filter>architecture</Filter>
+    </ClInclude>
+    <ClInclude Include="2d\2d.h">
+      <Filter>2d</Filter>
+    </ClInclude>
+    <ClInclude Include="3d\3d.h">
+      <Filter>3d</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{391b85f1-e75f-44d4-aa49-d3aee95a7cf0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="io">
+      <UniqueIdentifier>{5850c804-4859-49c9-8e5b-c8ab93889bca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="io\hidapi">
+      <UniqueIdentifier>{2f879241-f5c3-4ab0-abe8-b11a84ceb5a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2d">
+      <UniqueIdentifier>{c022e31d-1a92-482d-a8f5-f9dfe1231588}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3d">
+      <UniqueIdentifier>{76ab7d8b-0bbe-422c-a36d-8e74324d8de6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dynamic">
+      <UniqueIdentifier>{4b3e1901-d208-47bc-a1de-07b3212cae7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="architecture">
+      <UniqueIdentifier>{14c004e7-bd1e-4b4c-9fe0-7e0b6802f801}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
