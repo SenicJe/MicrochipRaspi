@@ -12,8 +12,8 @@
 /*  Globals */
 double dim=3.0; /* dimension of orthogonal box */
 char *windowName = "Gesture Monitor";
-int windowWidth=800;
-int windowHeight=800;
+int windowWidth=810;
+int windowHeight=810;
 
 /*  Various global state */
 int toggleAxes = 1;   /* toggle axes on and off */
@@ -78,29 +78,44 @@ void project()
  * ------
  * Draw the axes
  */
-void drawAxes() 
+void drawAxes(int enableX, int enableY, int enableZ) 
 {
   if (toggleAxes) {
     /*  Length of axes */
     double len = 2.0;
     glBegin(GL_LINES);
+    if(enableX){
     glColor3f(1.0,0,0);
     glVertex3d(0,0,0);
     glVertex3d(len,0,0);
+    }
+    if(enableY){
     glColor3f(0,1.0,0);
     glVertex3d(0,0,0);
     glVertex3d(0,len,0);
+    }
+    if(enableZ){
     glColor3f(0,0,1.0);
     glVertex3d(0,0,0);
     glVertex3d(0,0,len);
+    }
     glEnd();
     /*  Label axes */
+    if(enableX){
+    glColor3f(1.0,0,0);
     glRasterPos3d(len,0,0);
     print("X");
+    }
+    if(enableY){ 
+    glColor3f(0,1.0,0);
     glRasterPos3d(0,len,0);
     print("Y");
+    }
+    if(enableZ){
+    glColor3f(0,0,1.0);
     glRasterPos3d(0,0,len);
     print("Z");
+    }
   }
 }
 
@@ -113,8 +128,8 @@ void drawValues()
 {
   if (toggleValues) {
     glColor3f(0.8,0.8,0.8);
-    printAt(5,5,"Position %d %d %d", data.out_pos->x, data.out_pos->y, data.out_pos->z);
-    printAt(5,25,"Geture %s", gestures[data.last_gesture]);
+    printAt(5,100,"Position %d %d %d", data.out_pos->x, data.out_pos->y, data.out_pos->z);
+    printAt(5,50,"Geture %s", gestures[data.last_gesture]);
   }
 }
 
@@ -192,28 +207,42 @@ void display()
 
   /*  Reset previous transforms */
   glLoadIdentity();
+  
+  glViewport(0,0,windowWidth,windowHeight);
+  drawValues();
 
-  /*  Perspective - set eye position */
-  if (toggleMode) {
-    double Ex = -2*dim*Sin(th)*Cos(ph);
-    double Ey = +2*dim        *Sin(ph);
-    double Ez = +2*dim*Cos(th)*Cos(ph);
-    /* camera/eye position, aim of camera lens, up-vector */
-    gluLookAt(Ex,Ey,Ez , 0,0,0 , 0,Cos(ph),0);
-  }
   /*  Orthogonal - set world orientation */
-  else {
     glRotatef(ph,1,0,0);
     glRotatef(th,0,1,0);
     glRotatef(90,1,0,0);
     glRotatef(180,1,1,0);
-  }
 
   /*  Draw  */
-  drawAxes();
-  drawValues();
+  drawAxes(1,1,1);
   drawPoint();
-//  drawShape();
+
+  float width = windowWidth/3;
+  float height = windowHeight/3;
+// X-Y
+  glViewport(0, 0, width,height);
+  glLoadIdentity();
+  drawAxes(1,1,0);
+  drawPoint();
+
+// Y-Z
+  glViewport(width, 0, width,height);
+  glLoadIdentity();
+  glRotatef(90, 0,1,0);
+  drawAxes(0,1,1);
+  drawPoint();
+
+// X-Z
+  glViewport(width*2, 0, width,height);
+  glLoadIdentity();
+  glRotatef(-90,1,0,0);
+  drawAxes(1,0,1);
+  drawPoint();
+
 
   /*  Flush and swap */
   glFlush();
