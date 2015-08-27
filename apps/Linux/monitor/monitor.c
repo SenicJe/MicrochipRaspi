@@ -1,5 +1,7 @@
 #include "monitor.h"
 #include "device.h"
+#include <stdlib.h>
+#include <unistd.h>
 
 /*  Poor man's approximation of PI */
 #define PI 3.1415926535898
@@ -33,11 +35,9 @@ GLfloat vertG[3] = {-0.5,-0.5,-0.5};
 GLfloat vertH[3] = { 0.5,-0.5,-0.5};
 
 int frameCount = 0;
-int positionX = 0;
-int positionY = 0;
-int positionZ = 0;
+data_t data;
 
-void update();
+void updateDevice();
 
 /*
  * project()
@@ -102,8 +102,8 @@ void drawValues()
 {
   if (toggleValues) {
     glColor3f(0.8,0.8,0.8);
-    printAt(5,5,"Position %d %d %d", positionX, positionY, positionZ);
-//    printAt(5,25,"Frame Count =(%d)", frameCount);
+    printAt(5,5,"Position %d %d %d", data.out_pos->x, data.out_pos->y, data.out_pos->z);
+    printAt(5,25,"Frame Count =(%d)", frameCount);
   }
 }
 
@@ -156,9 +156,9 @@ void drawShape()
 }
 
 void drawPoint(){
-  float x = (float)positionX / 65535.0f * 2;
-  float y = (float)positionY / 65535.0f * 2;
-  float z = (float)positionZ / 65535.0f * 2;
+  float x = (float)data.out_pos->x / 65535.0f * 2;
+  float y = (float)data.out_pos->y / 65535.0f * 2;
+  float z = (float)data.out_pos->z / 65535.0f * 2;
 
   glPointSize(10.0f);
   glBegin(GL_POINTS);
@@ -208,7 +208,8 @@ void display()
   glFlush();
   glutSwapBuffers();
 
-  update();
+  updateDevice();
+  glutPostRedisplay();
 }
 
 /*
@@ -232,8 +233,8 @@ void windowKey(unsigned char key,int x,int y)
 {
   /*  Exit on ESC */
   if (key == 27) {
-    cleanup();
-    print("Bye");
+    printf("Bye");
+    free_device(&data);
     exit(0);
   }
   else if (key == 'a' || key == 'A') toggleAxes = 1-toggleAxes;
@@ -284,13 +285,30 @@ void windowMenu(int value)
   windowKey((unsigned char)value, 0, 0);
 }
 
-void update(){
+void updateDevice(){
   frameCount++;
-  glutPostRedisplay();
-  hmi3d_position_t* pos = getPosition();
-  positionX = pos->x;
-  positionY = pos->y;
-  positionZ = pos->z;
+  if(data.running)
+  {
+    update_device(&data);
+  }
+}
+
+void init_data(data_t *data)
+{
+    /* The demo should be running */
+    data->running = 1;
+
+    /* Render menu on startup. */
+    data->menu_current = -1;
+
+    /* Automatic calibration enabled by default */
+    data->auto_calib = 1;
+}
+
+void initDevice() {
+  memset(&data, 0, sizeof(data));
+  init_data(&data);
+  init_device(&data);
 }
 
 /*
@@ -300,21 +318,19 @@ void update(){
  */
 int main(int argc,char* argv[])
 {
-  if(setupDevice() != 1) {
-    printf("Setup Device fail");
-    return;
-  }
+  initDevice();
+  updateDevice();
 
   glutInit(&argc,argv);
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
   glutInitWindowSize(windowWidth,windowHeight);
+  glutInitWindowPosition(0,0);
   glutCreateWindow(windowName);
 
   glutDisplayFunc(display);
   glutReshapeFunc(reshape);
   glutKeyboardFunc(windowKey);
   glutSpecialFunc(windowSpecial);
-//  glutTimerFunc(20, glutTimer, 1);
 
   glutCreateMenu(windowMenu);
   glutAddMenuEntry("Toggle Axes [a]",'a');
@@ -322,6 +338,7 @@ int main(int argc,char* argv[])
   glutAddMenuEntry("Toggle Mode [m]",'m');
   glutAttachMenu(GLUT_RIGHT_BUTTON);
 
+  printf("Start !!!");
   glutMainLoop();
 
   return 0;
