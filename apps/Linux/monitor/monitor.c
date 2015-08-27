@@ -34,6 +34,17 @@ GLfloat vertF[3] = {-0.5, 0.5,-0.5};
 GLfloat vertG[3] = {-0.5,-0.5,-0.5};
 GLfloat vertH[3] = { 0.5,-0.5,-0.5};
 
+/* Human readable strings for the gestures */
+static const char *gestures[] = {
+    "-                       ",
+    "Flick West > East       ",
+    "Flick East > West       ",
+    "Flick South > North     ",
+    "Flick North > South     ",
+    "Circle clockwise        ",
+    "Circle counter-clockwise"
+};
+
 int frameCount = 0;
 data_t data;
 
@@ -103,7 +114,7 @@ void drawValues()
   if (toggleValues) {
     glColor3f(0.8,0.8,0.8);
     printAt(5,5,"Position %d %d %d", data.out_pos->x, data.out_pos->y, data.out_pos->z);
-    printAt(5,25,"Frame Count =(%d)", frameCount);
+    printAt(5,25,"Geture %s", gestures[data.last_gesture]);
   }
 }
 
